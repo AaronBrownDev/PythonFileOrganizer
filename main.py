@@ -1,22 +1,24 @@
 from configparser import ConfigParser
-import os
+import os, shutil
 
 config = ConfigParser()
 config.read("file_locations.ini")
 
+# file locations of source and output directories
 file_locations = {
-    "b_directory" : config["DEFAULT"]["beginning_direct"],
-    "archives" : config["DEFAULT"]["beginning_direct"] + "/Archives",
-    "documents" : config["DEFAULT"]["beginning_direct"] + "/Documents",
-    "images" : config["DEFAULT"]["beginning_direct"] + "/Images",
-    "videos" : config["DEFAULT"]["beginning_direct"] + "/Videos",
-    "audio" : config["DEFAULT"]["beginning_direct"] + "/Audio",
-    "code" : config["DEFAULT"]["beginning_direct"] + "/Code",
-    "executables" : config["DEFAULT"]["beginning_direct"] + "/Executables",
-    "system_files" : config["DEFAULT"]["beginning_direct"] + "/System Files",
-    "other" : config["DEFAULT"]["beginning_direct"] + "/Other"
+    "src_directory" : config["DEFAULT"]["beginning_direct"],
+    "Archives" : config["DEFAULT"]["beginning_direct"] + "/Archives",
+    "Documents" : config["DEFAULT"]["beginning_direct"] + "/Documents",
+    "Images" : config["DEFAULT"]["beginning_direct"] + "/Images",
+    "Videos" : config["DEFAULT"]["beginning_direct"] + "/Videos",
+    "Audio" : config["DEFAULT"]["beginning_direct"] + "/Audio",
+    "Code" : config["DEFAULT"]["beginning_direct"] + "/Code",
+    "Executables" : config["DEFAULT"]["beginning_direct"] + "/Executables",
+    "System_files" : config["DEFAULT"]["beginning_direct"] + "/System Files",
+    "Other" : config["DEFAULT"]["beginning_direct"] + "/Other"
 }
 
+# assigns the file extensions into groups by their umbrella type
 file_extensions = {
     "Archives": [".zip", ".rar", ".7z", ".tar", ".gz"],
     "Documents": [".doc", ".docx", ".pdf", ".txt", ".ppt", ".pptx", ".xls", ".xlsx"],
@@ -28,16 +30,32 @@ file_extensions = {
     "System Files": [".dll", ".sys", ".tmp", ".log"],
 }
 
+# gives the file a folder to go into
+def assign_file(path):
+    file_extension = f".{path.name.split(".")[-1]}"
+    folder = "Other" # initialize the folder as other in case file type is not listed
+    
+    for group in file_extensions:
+        if file_extension in file_extensions[group]:
+            folder = group
 
+    return folder
+
+# moves the file into its assigned folder    
+def move_file(file, folder):
+    if not os.path.exists(file_locations[folder]):
+        # creates the folder when the folder does not exist in the source directory
+        os.makedirs(file_locations[folder])
+
+    shutil.move(file, file_locations[folder])
+    
 def main():
-    with os.scandir(file_locations.get("b_directory")) as directory:
+    # Goes through the source directory
+    with os.scandir(file_locations.get("src_directory")) as directory:
         for path in directory:
             if path.is_file():
-                file_name = path.name
-                file_extension = f".{path.name.split(".")[-1]}"
-                for group in file_extensions:
-                    if file_extension in file_extensions[group]:
-                        print(group, file_extension)
-                        
+                folder = assign_file(path)
+                move_file(path, folder)
+            
 if __name__ == "__main__":
     main()
