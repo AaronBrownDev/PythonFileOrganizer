@@ -6,18 +6,20 @@ from pathlib import Path
 config = ConfigParser()
 config.read("file_locations.ini")
 
+source_directory = config["DEFAULT"]["source_directory"] # /some/directory/path/
+
 # file locations of source and output directories
 file_locations = {
-    "src_directory": config["DEFAULT"]["beginning_direct"],
-    "Archives": config["DEFAULT"]["beginning_direct"] + "Archives",
-    "Documents": config["DEFAULT"]["beginning_direct"] + "Documents",
-    "Images": config["DEFAULT"]["beginning_direct"] + "Images",
-    "Videos": config["DEFAULT"]["beginning_direct"] + "Videos",
-    "Audio": config["DEFAULT"]["beginning_direct"] + "Audio",
-    "Code": config["DEFAULT"]["beginning_direct"] + "Code",
-    "Executables": config["DEFAULT"]["beginning_direct"] + "Executables",
-    "System_files": config["DEFAULT"]["beginning_direct"] + "System Files",
-    "Other": config["DEFAULT"]["beginning_direct"] + "Other"
+    "src_directory" : source_directory,
+    "Archives"      : source_directory + "Archives",
+    "Documents"     : source_directory + "Documents",
+    "Images"        : source_directory + "Images",
+    "Videos"        : source_directory + "Videos",
+    "Audio"         : source_directory + "Audio",
+    "Code"          : source_directory + "Code",
+    "Executables"   : source_directory + "Executables",
+    "System_files"  : source_directory + "System Files",
+    "Other"         : source_directory + "Other"
 }
 
 # assigns the file extensions into groups by their umbrella type
